@@ -40,3 +40,7 @@ You can preview the production build with `pnpm run preview`.
 ## Environment Variables
 
 Create a `.env` file in the root directory of your project using the variables in the `.env.example` file
+
+
+## Pocketbase
+This starterkit requires you to have a running pocketbase instance, either [locally](https://pocketbase.io/docs/), on PaaS solution like [fly.io](https://github.com/pocketbase/pocketbase/discussions/537) or by using for isntance [pockethost.io](https://pockethost.io/).
