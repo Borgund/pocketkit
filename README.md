@@ -43,4 +43,4 @@ Create a `.env` file in the root directory of your project using the variables i
 
 
 ## Pocketbase
-This starterkit requires you to have a running pocketbase instance, either [locally](https://pocketbase.io/docs/), on PaaS solution like [fly.io](https://github.com/pocketbase/pocketbase/discussions/537) or by using for isntance [pockethost.io](https://pockethost.io/).
+This starterkit requires you to have a running pocketbase instance, either [locally](https://pocketbase.io/docs/), on PaaS solution like [fly.io](https://github.com/pocketbase/pocketbase/discussions/537) or by using for instance [pockethost.io](https://pockethost.io/).
