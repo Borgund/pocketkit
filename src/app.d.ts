@@ -3,10 +3,16 @@
 declare global {
 	namespace App {
 		// interface Error {}
-		// interface Locals {}
+		interface Locals {
+			pb: import('pocketbase').default;
+			pb_providers: import('pocketbase').AuthProviderInfo[];
+		}
 		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}
+	}
+	interface ImportMetaEnv {
+		PB_URL: string;
 	}
 }
 
