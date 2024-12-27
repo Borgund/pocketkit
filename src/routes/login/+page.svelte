@@ -74,6 +74,7 @@
 						name={provider.authURL}
 						type="submit"
 						aria-label={provider.name}
+						data-tooltip={`Login with ${provider.displayName}`}
 						formaction="?/oauth&provider={provider.name}">{provider.displayName}</button
 					>
 				{/each}
