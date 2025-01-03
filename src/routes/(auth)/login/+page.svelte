@@ -1,28 +1,43 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { updated } from '$app/stores';
 	import type { ActionData, PageData } from './$types';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
+	let secondsTilResetEnables = $state(10);
+	$effect(() => {
+		const interval = setInterval(() => {
+			if (secondsTilResetEnables > 0) {
+				secondsTilResetEnables -= 1;
+			}
+		}, 1000);
+		return () => {
+			clearInterval(interval);
+		};
+	});
 </script>
 
 <main class="container">
 	{#if form?.fail || data?.fail}
 		<p class="errormessage">
-			<mark>{data.fail ? 'Something went wront with OAuth! Try again later' : form?.message}</mark>
+			<mark>{data.fail ? 'Something went wrong with OAuth! Try again later' : form?.message}</mark>
 		</p>
+	{/if}
+	{#if form?.passwordReset}
+		<p><mark>A password reset link has been sent to you. Please check your inbox.</mark></p>
 	{/if}
 	<form action="?/login" method="post" use:enhance>
 		<legend>Login</legend>
 		<label>
-			<span>E-Mail</span>
+			<span>Email</span>
 			<input
 				name="email"
 				type="email"
-				title="E-mail"
+				title="Email"
 				placeholder="mail@example.com"
 				aria-invalid={form?.emailRequired}
 				aria-describedby="invalid-helper-email"
+				required
+				value={form?.email}
 			/>
 			{#if form?.emailRequired}
 				<small id="invalid-helper-email">Please provide a valid email!</small>
@@ -35,7 +50,6 @@
 				type="password"
 				title="Password"
 				placeholder="********"
-				required
 				aria-invalid={form?.passwordRequired}
 				aria-describedby="invalid-helper-password"
 			/>
@@ -43,32 +57,34 @@
 				<small id="invalid-helper-password">Please provide a valid password!</small>
 			{/if}
 		</label>
-		<button class="primary" type="submit" formaction="?/login" data-tooltip="Login to your user">
-			Login
-		</button>
-		<button
-			class="secondary"
-			type="submit"
-			formaction="?/register"
-			data-tooltip="Create a new user"
-		>
-			Register
-		</button>
-		<button
-			type="submit"
-			class="outline secondary"
-			formaction="?/reset"
-			data-tooltip="Request a reset of your password, please check your E-Mail"
-			formnovalidate
-		>
-			Reset password
-		</button>
+		<div class="grid">
+			<button class="primary" type="submit" formaction="?/login" data-tooltip="Login to your user">
+				Login
+			</button>
+			<button
+				class="secondary"
+				type="submit"
+				formaction="?/register"
+				data-tooltip="Create a new user"
+			>
+				Register
+			</button>
+			<button
+				type="submit"
+				class="outline secondary"
+				formaction="?/reset"
+				data-tooltip="Request a reset of your password, please check your Email"
+				disabled={form?.passwordReset || secondsTilResetEnables > 0}
+			>
+				Reset password {secondsTilResetEnables > 0 ? `(${secondsTilResetEnables})` : ''}
+			</button>
+		</div>
 	</form>
 	<hr />
 	{#if data?.providers?.length > 0}
-		<form method="post" use:enhance>
+		<form class="oauth" method="post" use:enhance>
 			<legend>OAuth</legend>
-			<fieldset class="grid">
+			<fieldset>
 				{#each data.providers as provider}
 					<button
 						name={provider.authURL}
@@ -94,8 +110,5 @@
 	}
 	main.container p.errormessage mark {
 		background-color: var(--pico-form-element-invalid-border-color);
-	}
-	form fieldset.grid {
-		gap: 0.5rem;
 	}
 </style>

@@ -31,20 +31,27 @@ export const authentication: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event);
 
 	// Send back the default 'pb_auth' cookie to client with latest store state.
-	response.headers.append('set-cookie', event.locals.pb.authStore.exportToCookie({sameSite: 'Lax'}));
+	response.headers.append(
+		'set-cookie',
+		event.locals.pb.authStore.exportToCookie({ sameSite: 'Lax' })
+	);
 
 	return response;
 };
 
-const unprotectedPrefix = ['/login', '/register', '/auth'];
+const unprotectedPrefix = ['/login', '/register', '/auth', '/verify'];
 
 export const authorization: Handle = async ({ event, resolve }) => {
 	const pathname = event.url.pathname;
 	// protect routes
 	if (pathname !== '/' && !unprotectedPrefix.some((path) => pathname.startsWith(path))) {
-		const loggedIn = await event.locals.pb.authStore;
+		const loggedIn = await event.locals.pb.authStore.record;
+		const verified = await event.locals.pb.authStore.record?.verified;
 		if (!loggedIn) {
 			throw redirect(303, '/login');
+		}
+		if (!verified && loggedIn) {
+			throw redirect(303, '/verify');
 		}
 	}
 	return await resolve(event);

@@ -11,7 +11,7 @@ export const load = (async ({ locals, url }) => {
 	const authMethods = await locals.pb_providers; //await locals.pb.collection('users').listAuthMethods();
 	const fail = url.searchParams.get('fail') === 'true';
 
-	return { providers: authMethods, fail };
+	return { providers: authMethods, fail, time: Date.now()};
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
@@ -22,8 +22,9 @@ export const actions: Actions = {
 
 		if (!email || !password) {
 			return fail(400, {
-				emailRequired: email === null,
-				passwordRequired: password === null
+				email,
+				emailRequired: !email,
+				passwordRequired: !password
 			});
 		}
 		// setting password comfirm to exclude it from the login form (remove if implemented in form).
@@ -39,7 +40,7 @@ export const actions: Actions = {
 			return fail(500, { fail: true, message: errorObj.data.message });
 		}
 
-		throw redirect(303, '/dashboard');
+		throw redirect(303, '/verify');
 	},
 	login: async ({ locals, request }) => {
 		const data = await request.formData();
@@ -48,8 +49,9 @@ export const actions: Actions = {
 
 		if (!email || !password) {
 			return fail(400, {
-				emailRequired: email === null,
-				passwordRequired: password === null
+				email,
+				emailRequired: !email,
+				passwordRequired: !password
 			});
 		}
 
@@ -65,10 +67,10 @@ export const actions: Actions = {
 	},
 	reset: async ({ locals, request }) => {
 		const data = await request.formData();
-		const email = data.get('email');
+		const email = data.get('email')?.toString() ?? '';
 
 		if (!email) {
-			return fail(400, { emailRequired: email === null });
+			return fail(400, { email, emailRequired: !email });
 		}
 
 		try {
@@ -78,6 +80,7 @@ export const actions: Actions = {
 			const errorObj = error as ClientResponseError;
 			return fail(500, { fail: true, message: errorObj.data.message });
 		}
+		return { passwordReset: true, resetTime: Date.now() };
 	},
 	oauth: async ({ locals, request, cookies }) => {
 		const providerName = new URL(request.url).searchParams.get('provider');
