@@ -5,7 +5,6 @@ import { ClientResponseError } from 'pocketbase';
 export const load = (async ({ locals, url }) => {
 	const fail = url.searchParams.get('fail') === 'true';
 	if (locals.pb.authStore.record?.verified) {
-		console.log('HEY! What are you doing here!', locals.pb.authStore.record);
 		redirect(303, '/dashboard');
 	}
 
@@ -24,11 +23,6 @@ export const actions: Actions = {
 		}
 
 		return { requestSent: true };
-	},
-
-	logout: async ({ locals }) => {
-		await locals.pb.authStore.clear();
-		throw redirect(303, '/login');
 	}
 	//actionname: async ({ locals, request }) => {}
 };

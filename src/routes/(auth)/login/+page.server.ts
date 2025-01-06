@@ -11,7 +11,7 @@ export const load = (async ({ locals, url }) => {
 	const authMethods = await locals.pb_providers; //await locals.pb.collection('users').listAuthMethods();
 	const fail = url.searchParams.get('fail') === 'true';
 
-	return { providers: authMethods, fail, time: Date.now()};
+	return { providers: authMethods, fail, time: Date.now() };
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {

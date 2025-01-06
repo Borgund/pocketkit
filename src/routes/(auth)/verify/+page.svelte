@@ -30,7 +30,7 @@
 					: ''}</button
 			>
 		{/if}
-		<button formaction="?/logout">Logout</button>
+		<button formaction="/login?/logout">Logout</button>
 	</form>
 </main>
 
